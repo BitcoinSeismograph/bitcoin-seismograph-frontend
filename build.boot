@@ -31,7 +31,8 @@
  '[boot.lein :as lein]
  '[deraen.boot-sass :refer [sass]]
  '[pandeiro.boot-http :refer [serve]]
- '[powerlaces.boot-cljs-devtools :refer [cljs-devtools dirac]])
+ '[powerlaces.boot-cljs-devtools :refer [cljs-devtools dirac]]
+ '[clojure.java.browse :refer [browse-url]])
 
 ;; generate an up-to-date project.clj each time boot is run
 (lein/generate)
@@ -59,6 +60,12 @@
           concat '[cider.nrepl/cider-middleware
                    refactor-nrepl.middleware/wrap-refactor])
    identity)
+
+(deftask open-browser
+  "Open a url in a web browser"
+  [u url VAL str "url to open"]
+  (with-post-wrap fileset
+    (browse-url url)))
 
 (deftask run
   "The `run` task wraps the building of your application in some
@@ -98,7 +105,8 @@
   "Simple alias to run application in development mode"
   []
   (comp (development)
-        (run)))
+        (run)
+        (open-browser :url "http://localhost:3000")))
 
 (deftask production []
   (task-options! cljs {:optimizations :advanced})
