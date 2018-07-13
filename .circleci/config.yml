@@ -6,8 +6,7 @@ jobs:
       only:
         - master
     docker:
-      - image: circleci/clojure:boot-2.7.2
-      # Use boot-2.7.2-node-browsers for version with both Node and browsers (e.g. Chrome)
+      - image: circleci/clojure:boot-node
     steps:
       - run: sudo npm install -g npm@latest
       - checkout
