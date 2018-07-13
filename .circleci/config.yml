@@ -1,0 +1,26 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/project
+    branches:
+      only:
+        - master
+    docker:
+      - image: circleci/clojure:boot-2.7.2
+      # Use boot-2.7.2-node-browsers for version with both Node and browsers (e.g. Chrome)
+    steps:
+      - checkout
+      - restore_cache:
+          key: project-{{checksum "boot.properties" }}-{{ checksum "build.boot" }}
+      - run: boot prod
+      - store_artifacts:
+          path: ~/project/target
+      - save_cache:
+          paths:
+            - ~/.m2
+            - ~/.boot/cache/lib
+            - ~/.boot/cache/bin
+          key: project-{{checksum "boot.properties" }}-{{ checksum "build.boot" }}
+    environment:
+      BOOT_JVM_OPTIONS: "-Xms512m -Xmx4096m"
+      BOOT_WATCHERS_DISABLE: "yes"
