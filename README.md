@@ -18,5 +18,6 @@ compilation errors), compile the SCSS and start a development server.
 For a minified build, run:
 
 ```bash
+$ npm install
 $ boot prod
 ```
