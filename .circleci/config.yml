@@ -9,9 +9,13 @@ jobs:
       - image: circleci/clojure:boot-2.7.2
       # Use boot-2.7.2-node-browsers for version with both Node and browsers (e.g. Chrome)
     steps:
+      - run: sudo npm install -g npm@latest
       - checkout
       - restore_cache:
           key: project-{{checksum "boot.properties" }}-{{ checksum "build.boot" }}
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run: npm install
       - run: boot prod
       - store_artifacts:
           path: ~/project/target
@@ -21,6 +25,10 @@ jobs:
             - ~/.boot/cache/lib
             - ~/.boot/cache/bin
           key: project-{{checksum "boot.properties" }}-{{ checksum "build.boot" }}
+      - save_cache:
+          paths:
+            - node_modules
+          key: dependency-cache-{{ checksum "package.json" }}
     environment:
       BOOT_JVM_OPTIONS: "-Xms512m -Xmx4096m"
       BOOT_WATCHERS_DISABLE: "yes"
