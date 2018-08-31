@@ -8,6 +8,11 @@ jobs:
     docker:
       - image: circleci/clojure:boot-node
     steps:
+      - run: sudo apt-get -y -qq update
+      - run: sudo apt-get -y -qq install python3
+      - run: curl -O https://bootstrap.pypa.io/get-pip.py
+      - run: sudo python3 get-pip.py
+      - run: sudo pip install awscli --upgrade
       - run: sudo npm install -g npm@latest
       - checkout
       - restore_cache:
@@ -16,6 +21,7 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
       - run: npm install
       - run: boot prod
+      - run: aws s3 sync ~/project/target s3://$S3BUCKET --delete
       - store_artifacts:
           path: ~/project/target
       - save_cache:
