@@ -273,7 +273,7 @@
                                    :onclick
                                    (fn [d _]
                                      (re-frame/dispatch [:load/community-data-from-graph
-                                                         (-> d .-x .getTime)]))}
+                                                         (+ (* 6 60 60 1000) (-> d .-x .getTime)) ]))}
                          :axis    {:x {:type      "timeseries"
                                        :localtime false
                                        :tick      {:format ->date}}}

@@ -105,8 +105,7 @@
   "Simple alias to run application in development mode"
   []
   (comp (development)
-        (run)
-        (open-browser :url "http://localhost:3000")))
+        (run)))
 
 (deftask production []
   (task-options! cljs {:optimizations :advanced})

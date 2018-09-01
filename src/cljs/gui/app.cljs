@@ -14,7 +14,8 @@
             [gui.footer :as footer]
             [gui.header :as header]
             [gui.modal :as modal]
-            [gui.welcome :as welcome]))
+            [gui.welcome :as welcome]
+            [gui.archive :as archive]))
 
 (ge/listen js/window
            ge/EventType.KEYDOWN
@@ -48,7 +49,6 @@
   (re-frame/dispatch-sync [:initialize-db])
   ;; FIXME: this is just a workaround for reloads during dev
   (when-not @(re-frame/subscribe [:initialized?])
-    (re-frame/dispatch [:load/initial-data]))
+    (re-frame/dispatch [:load/initial-data (archive/default-now)]))
   (re-frame/clear-subscription-cache!)
-  (reagent/render-component [root]
-                            (.getElementById js/document "container")))
+  (reagent/render-component [root] (.getElementById js/document "container")))

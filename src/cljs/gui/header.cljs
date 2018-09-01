@@ -3,7 +3,8 @@
             [re-frame.core :as re-frame]
 
             [gui.modal :as modal]
-            [gui.vars :as vars]))
+            [gui.vars :as vars]
+            [gui.archive :as archive]))
 
 (defn- currency-selector []
   (let [current (re-frame/subscribe [:config/currency])]
@@ -53,7 +54,19 @@
          [:div.navbar-item.no-hover
           [currency-selector]]]
         [:div.navbar-end
-         [:a.navbar-item
+         [:div.navbar-item
+          [:div.select.is-small
+           [:select
+            {:defaultValue (or (js/localStorage.getItem "selected") (archive/default-now))
+             :onChange (fn [evt]
+                         (js/localStorage.setItem "selected" (-> evt .-target .-value))
+                         (re-frame/dispatch [:load/initial-data (-> evt .-target .-value)]))}
+            (for [d (range 0 399)]                          ;; 2017-06-15 -> 2018-07-18 = 398 days of data
+              (let [value (.toISOString (js/Date. (+ 1497528000000 (* d 1000 60 60 24))))]
+                [:option
+                 {:key d :value value}
+                 (str "Archive: " (subs value 0 10))]))]]]
+         [:a.navbar-item.disabled
           {:href   vars/feedback-url
            :target "_blank"}
           "Feedback"]

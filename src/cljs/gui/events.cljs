@@ -1,7 +1,8 @@
 (ns gui.events
   (:require [re-frame.core :as re-frame]
 
-            [gui.db :as db]))
+            [gui.db :as db]
+            [gui.archive :as archive]))
 
 (defn toggle-style [db _]
   (update db :dashboard/style #(case %
@@ -65,22 +66,25 @@
 
 (re-frame/reg-event-fx
  :load/graph-data
- (fn [_ _]
-   {:load-data {:url        "https://api.bitcoinseismograph.info/graph"
-                :on-success #(re-frame/dispatch
-                              [:load/data-available :dashboard/graph %])}}))
+ (fn [_ [_ now]]
+   {:load-data {:url          "http://localhost:3020/api/graph"
+                :query-params {:now now}
+                :on-success   #(re-frame/dispatch
+                                 [:load/data-available :dashboard/graph %])}}))
 
 (re-frame/reg-event-fx
  :load/community-data
- (fn [_ _]
-   {:load-data {:url        "https://api.bitcoinseismograph.info/text"
-                :on-success #(re-frame/dispatch
-                              [:load/data-available :dashboard/community %])}}))
+ (fn [_ [_ now]]
+   {:load-data {:url          "http://localhost:3020/api/text"
+                :query-params {:timestamp (.getTime (js/Date. now))}
+                :on-success   #(re-frame/dispatch
+                                 [:load/data-available :dashboard/community %])}}))
 
 (re-frame/reg-event-fx
  :load/dashboard-data
- (fn [_ _]
-   {:load-data {:url        "https://api.bitcoinseismograph.info/dashboard"
+ (fn [_ [_ now]]
+   {:load-data {:url        "http://localhost:3020/api/dashboard"
+                :query-params {:now now}
                 :on-success #(re-frame/dispatch
                               [:load/data-available :dashboard/metrics %])}}))
 
@@ -92,7 +96,7 @@
                 timestamp
                 {:status    :progress/loading
                  :timestamp timestamp}]
-    :load-data {:url          "https://api.bitcoinseismograph.info/text"
+    :load-data {:url          "http://localhost:3020/api/text"
                 :query-params {:timestamp timestamp}
                 :on-success   #(re-frame/dispatch
                                 ;; TODO: add caching
@@ -127,14 +131,14 @@
 (re-frame/reg-event-fx
  :load/refresh
  (fn [_ _]
-   {:dispatch [:load/initial-data]}))
+   {:dispatch [:load/initial-data (archive/default-now)]}))
 
 (re-frame/reg-event-fx
  :load/initial-data
- (fn [_ _]
-   {:dispatch-n [[:load/graph-data]
-                 [:load/community-data]
-                 [:load/dashboard-data]]}))
+ (fn [_ [_ now]]
+   {:dispatch-n [[:load/graph-data now]
+                 [:load/community-data now]
+                 [:load/dashboard-data now]]}))
 
 (re-frame/reg-event-db
  :initialize-db
