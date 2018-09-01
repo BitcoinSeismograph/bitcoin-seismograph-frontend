@@ -9,10 +9,7 @@
       "The Bitcoin Seismograph is a joint open source research project by "
       "Marcel Morisse"
       ", PhD student at the Department of Informatics, "
-      "Universität Hamburg, and the "
-      [:a {:href   "https://versility.com"
-           :target "_blank"}
-       "Versility Labs GmbH"]]
+      "Universität Hamburg, and the Versility Labs GmbH"]
      [:div.column.is-6
       [:p
        "We need your "
