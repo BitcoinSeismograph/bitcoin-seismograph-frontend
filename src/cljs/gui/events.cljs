@@ -67,26 +67,26 @@
 (re-frame/reg-event-fx
  :load/graph-data
  (fn [_ [_ now]]
-   {:load-data {:url          "http://localhost:3020/api/graph"
-                :query-params {:now now}
-                :on-success   #(re-frame/dispatch
-                                 [:load/data-available :dashboard/graph %])}}))
+   {:load-data {:url        (str "https://bitcoinseismograph.info/archive/graph/" now ".json")
+                ;:query-params {:now now}
+                :on-success #(re-frame/dispatch
+                               [:load/data-available :dashboard/graph %])}}))
 
 (re-frame/reg-event-fx
  :load/community-data
  (fn [_ [_ now]]
-   {:load-data {:url          "http://localhost:3020/api/text"
-                :query-params {:timestamp (.getTime (js/Date. now))}
-                :on-success   #(re-frame/dispatch
-                                 [:load/data-available :dashboard/community %])}}))
+   {:load-data {:url        (str "https://bitcoinseismograph.info/archive/text/" (.getTime (js/Date. now)) ".json")
+                ;:query-params {:timestamp (.getTime (js/Date. now))}
+                :on-success #(re-frame/dispatch
+                               [:load/data-available :dashboard/community %])}}))
 
 (re-frame/reg-event-fx
  :load/dashboard-data
  (fn [_ [_ now]]
-   {:load-data {:url        "http://localhost:3020/api/dashboard"
-                :query-params {:now now}
+   {:load-data {:url        (str "https://bitcoinseismograph.info/archive/dashboard/" now ".json")
+                ;:query-params {:now now}
                 :on-success #(re-frame/dispatch
-                              [:load/data-available :dashboard/metrics %])}}))
+                               [:load/data-available :dashboard/metrics %])}}))
 
 (re-frame/reg-event-fx
  :load/community-data-for-timestamp
@@ -96,8 +96,8 @@
                 timestamp
                 {:status    :progress/loading
                  :timestamp timestamp}]
-    :load-data {:url          "http://localhost:3020/api/text"
-                :query-params {:timestamp timestamp}
+    :load-data {:url          (str "https://bitcoinseismograph.info/archive/text/" timestamp ".json") ;"http://localhost:3020/api/text"
+                ;:query-params {:timestamp timestamp}
                 :on-success   #(re-frame/dispatch
                                 ;; TODO: add caching
                                 [:load/data-available
