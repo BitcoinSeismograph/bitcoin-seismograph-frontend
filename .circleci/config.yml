@@ -21,7 +21,7 @@ jobs:
       - run: curl -O https://bootstrap.pypa.io/get-pip.py
       - run: sudo python3 get-pip.py
       - run: sudo pip install awscli --upgrade
-      - run: aws s3 sync ~/project/target s3://$S3BUCKET --delete
+      - run: aws s3 cp ~/project/target "s3://${S3BUCKET}/" --recursive --region "eu-central-1" --acl public-read --cache-control max-age=432000,public
       - store_artifacts:
           path: ~/project/target
       - save_cache:
